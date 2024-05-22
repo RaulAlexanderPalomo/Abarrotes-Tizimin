@@ -1,4 +1,4 @@
-# modelo/interfaces.py
+#interfaces
 from abc import ABC, abstractmethod
 
 class ICliente(ABC):

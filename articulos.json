@@ -1,0 +1,16 @@
+[
+    {
+        "id_articulo": "1",
+        "nombre": "Palomitas",
+        "precio_publico": 2.0,
+        "precio_proveedor": 3.0,
+        "cantidad": 79
+    },
+    {
+        "id_articulo": "2",
+        "nombre": "A",
+        "precio_publico": 2.0,
+        "precio_proveedor": 2.0,
+        "cantidad": 91
+    }
+]

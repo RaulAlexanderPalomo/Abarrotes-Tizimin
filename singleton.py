@@ -1,7 +1,7 @@
-# singleton.py
 import json
 from datetime import datetime
 from factory import Factory
+import os
 
 class SingletonMeta(type):
     _instances = {}
@@ -20,6 +20,9 @@ class DataStore(metaclass=SingletonMeta):
         self.cargar_datos()
 
     def cargar_datos(self):
+        # Crear el directorio "archivos" si no existe
+        os.makedirs("archivos", exist_ok=True)
+
         try:
             with open('clientes.json', 'r') as f:
                 clientes_dict = json.load(f)
@@ -34,11 +37,13 @@ class DataStore(metaclass=SingletonMeta):
         except FileNotFoundError:
             self.articulos = []
 
+        # Ignorar cualquier error al leer el archivo de compras
         try:
-            with open('compras.json', 'r') as f:
+            with open('archivos/compras.json', 'r') as f:
                 compras_dict = json.load(f)
-                self.compras = [Factory.crear_compra(self.clientes, self.articulos, **compra) for compra in compras_dict]
-        except FileNotFoundError:
+                self.compras = [Factory.crear_compra(self.clientes, self.articulos, **compra) for compra in
+                                compras_dict]
+        except:
             self.compras = []
 
     def guardar_datos(self):
@@ -46,5 +51,17 @@ class DataStore(metaclass=SingletonMeta):
             json.dump([cliente.to_dict() for cliente in self.clientes], f, indent=4)
         with open('articulos.json', 'w') as f:
             json.dump([articulo.to_dict() for articulo in self.articulos], f, indent=4)
-        with open('compras.json', 'w') as f:
-            json.dump([compra.to_dict() for compra in self.compras], f, indent=4)
+
+        # Leer las compras existentes del archivo
+        try:
+            with open('archivos/compras.json', 'r') as f:
+                compras_existentes = json.load(f)
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            compras_existentes = []
+
+        # Agregar las nuevas compras a la lista
+        compras_actualizadas = compras_existentes + [compra.to_dict() for compra in self.compras]
+
+        # Guardar todas las compras en el archivo
+        with open('archivos/compras.json', 'w') as f:
+            json.dump(compras_actualizadas, f, indent=4)
